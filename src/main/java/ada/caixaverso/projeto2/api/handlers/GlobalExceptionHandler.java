@@ -7,6 +7,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceException;
 import jakarta.validation.ConstraintViolationException;
+import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.NotAllowedException;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.Context;
@@ -27,6 +28,15 @@ public class GlobalExceptionHandler {
 
     @Context
     UriInfo uriInfo;
+
+    @ServerExceptionMapper
+    public Response handleForbidden(ForbiddenException e) {
+        return createErrorResponse(
+                FORBIDDEN.getStatusCode(),
+                "Acesso proibido",
+                "Acesso proibido: usuário não possui permissão para tal recurso"
+        );
+    }
 
     @ServerExceptionMapper
     public Response handleUnauthorized(UnauthorizedException e) {
