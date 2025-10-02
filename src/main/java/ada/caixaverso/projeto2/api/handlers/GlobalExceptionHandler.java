@@ -2,10 +2,12 @@ package ada.caixaverso.projeto2.api.handlers;
 
 
 import ada.caixaverso.projeto2.api.exception.ErrorResponseDTO;
+import io.quarkus.security.UnauthorizedException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceException;
 import jakarta.validation.ConstraintViolationException;
+import jakarta.ws.rs.NotAllowedException;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
@@ -25,6 +27,24 @@ public class GlobalExceptionHandler {
 
     @Context
     UriInfo uriInfo;
+
+    @ServerExceptionMapper
+    public Response handleUnauthorized(UnauthorizedException e) {
+        return createErrorResponse(
+                UNAUTHORIZED.getStatusCode(),
+                "Não autorizado",
+                "Acesso negado: credenciais ausentes ou inválidas"
+        );
+    }
+
+    @ServerExceptionMapper
+    public Response handleMethodNotAllower(NotAllowedException e) {
+        return createErrorResponse(
+                METHOD_NOT_ALLOWED.getStatusCode(),
+                "Método não permitido",
+                "O método HTTP utilizado não é suportado para este recursos"
+        );
+    }
 
     @ServerExceptionMapper
     public Response handleConstraintViolation(ConstraintViolationException e) {
